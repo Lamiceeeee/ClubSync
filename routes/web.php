@@ -3,6 +3,30 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoteController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+
+Route::get('/db-check', function() {
+    if (!app()->isLocal()) abort(404); // Block in production
+    
+    try {
+        $tables = DB::select('SHOW TABLES');
+        return response()->json([
+            'database' => DB::connection()->getDatabaseName(),
+            'tables' => $tables ?: 'No tables found'
+        ]);
+    } catch (Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
+Route::get('/test-db', function() {
+    try {
+        DB::connection()->getPdo();
+        return "Connected successfully to: " . DB::connection()->getDatabaseName();
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,15 +38,12 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update'); // Ensure this line is present
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
     // Voting System Routes
-    Route::resource('votes', VoteController::class);
-    Route::post('votes/{vote}/participate', [VoteController::class, 'participate'])
-        ->name('votes.participate');
-    Route::get('votes/{vote}/results', [VoteController::class, 'results'])
-        ->name('votes.results');
+    Route::resource('votes', VoteController::class); // This includes create, store, edit, update, destroy, and index routes
 
     // Notification Routes
     Route::prefix('notifications')->group(function () {
@@ -39,6 +60,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [\App\Http\Controllers\NotificationController::class, 'index'])
             ->name('notifications.index');
     });
-}); // Make sure this closing brace matches the opening one
+});
 
+// Include authentication routes
 require __DIR__.'/auth.php';

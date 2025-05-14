@@ -23,7 +23,8 @@ class VoteController extends Controller
      */
     public function create()
     {
-        //
+        $clubs = \App\Models\Club::all();
+        return view('votes.create', ['clubs' => $clubs]);
     }
 
     /**
