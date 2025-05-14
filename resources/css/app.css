@@ -1,4 +1,81 @@
+/* ============================================ */
+/*  Bootstrap imports (must come first)         */
+/* ============================================ */
+@import 'bootstrap';
+
+/* ============================================ */
+/*  Tailwind directives                         */ 
+/* ============================================ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import 'bootstrap';
+
+/* ============================================ */
+/*  Fix Bootstrap/Tailwind conflicts            */
+/* ============================================ */
+/* Use Tailwind's focus rings instead of Bootstrap's outline */
+*:focus {
+    outline: none !important;
+}
+
+.btn {
+    @apply focus:ring-2 focus:ring-opacity-50;
+}
+
+/* ============================================ */
+/*  Custom styles                               */
+/* ============================================ */
+/* Notification System */
+.notification-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-list {
+    display: none;
+    position: absolute;
+    right: 0;
+    width: 350px;
+    max-height: 500px;
+    overflow-y: auto;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    border-radius: 0.5rem;
+}
+
+.notification-item.unread {
+    background-color: #f8f9fa;
+}
+
+.notification-bell:hover + .notification-list,
+.notification-list:hover {
+    display: block;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+}
+
+/* Voting System Styles */
+.vote-option-card {
+    @apply border rounded-lg p-4 mb-3 hover:bg-gray-50 transition-colors;
+}
+
+.vote-result-bar {
+    @apply bg-blue-500 h-4 rounded;
+    transition: width 0.5s ease;
+}
+
+/* General Application Styles */
+body {
+    @apply font-sans antialiased bg-gray-100;
+}
+
+.container {
+    @apply mx-auto px-4;
+}
+
+/* Add any other existing custom styles below */
